@@ -1,0 +1,46 @@
+# ===== DOTNET =====
+bin/
+obj/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ===== Visual Studio =====
+.vs/
+*.ncrunch*
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# ===== Visual Studio Code =====
+.vscode/*
+
+# ===== Node =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ===== Logs & Junk =====
+*.log
+*.DS_Store
+*.env
+.env.local
+.env.*.local
+
+# ===== Docker =====
+*.pid
+*.seed
+docker-compose.override.yml
+
+# ===== Coverage & Build =====
+coverage/
+dist/
+build/
+
+# ===== Misc =====
+Thumbs.db
+*.swp
