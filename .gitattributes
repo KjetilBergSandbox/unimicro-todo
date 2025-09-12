@@ -1,0 +1,64 @@
+# -----------------------
+# Global settings
+# -----------------------
+* text=auto eol=lf
+
+# -----------------------
+# TypeScript / JavaScript
+# -----------------------
+*.ts     text eol=lf
+*.tsx    text eol=lf
+*.js     text eol=lf
+*.jsx    text eol=lf
+
+# -----------------------
+# CSS / HTML / JSON / Markdown
+# -----------------------
+*.css    text eol=lf
+*.scss   text eol=lf
+*.html   text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+
+# -----------------------
+# C# / .NET
+# -----------------------
+*.cs     text eol=lf
+*.csproj text eol=lf
+*.sln    text eol=lf
+*.config text eol=lf
+*.xml    text eol=lf
+
+# -----------------------
+# Shell scripts / Batch / CI
+# -----------------------
+*.sh     text eol=lf
+*.bat    text eol=crlf
+*.ps1    text eol=crlf
+
+# -----------------------
+# Images / Binary / Fonts / Other
+# -----------------------
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.woff   binary
+*.woff2  binary
+*.eot    binary
+*.ttf    binary
+*.mp4    binary
+
+# -----------------------
+# Node / npm / Vite / tooling
+# -----------------------
+node_modules/  export-ignore
+dist/          export-ignore
+build/         export-ignore
+.env           export-ignore
+.env.*         export-ignore
+.vscode/       export-ignore
