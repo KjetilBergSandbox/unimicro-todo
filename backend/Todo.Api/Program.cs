@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Todo.Api.Data;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,12 @@ else
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<TodoDbContext>("DbContext")
+    .AddCheck<CpuHealthCheck>("CPU")
+    .AddCheck<RamHealthCheck>("RAM")
+    .AddCheck<DiskSpaceHealthCheck>("Disk Space");
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -26,6 +34,25 @@ using (var scope = app.Services.CreateScope())
     //db.Database.Migrate();
     db.Database.EnsureCreated();
 }
+
+app.MapHealthChecks("/api/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
+        var result = new
+        {
+            status = report.Status.ToString(),
+            timestamp = DateTime.UtcNow,
+            checks = report.Entries.Select(e => new {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                description = e.Value.Description
+            })
+        };
+        await context.Response.WriteAsync(JsonSerializer.Serialize(result));
+    }
+});
 
 if (app.Environment.IsDevelopment())
 {
