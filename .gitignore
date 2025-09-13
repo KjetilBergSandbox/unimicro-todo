@@ -1,3 +1,6 @@
+# ===== Project Files =====
+todo_dev.db
+
 # ===== DOTNET =====
 bin/
 obj/
