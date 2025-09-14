@@ -11,7 +11,17 @@
         public IEnumerable<Models.Task> ApplyOrdering(IEnumerable<Models.Task> tasks, string? title)
         {
             if (string.IsNullOrWhiteSpace(title)) return tasks;
-            return tasks.OrderBy(t => WeightedEditDistance(t.Title, title));
+            return tasks.OrderBy(t => FuzzyScore(t.Title, title));
+        }
+
+        public static int FuzzyScore(string a, string b)
+        {
+            a = a.ToLowerInvariant();
+            b = b.ToLowerInvariant();
+
+            int edit = WeightedEditDistance(a, b);
+            int common = a.Intersect(b).Count();
+            return edit - common;
         }
 
         // Damerau-Levenshtein algorithm with custom weights for insertions, deletions, substitutions, and transpositions

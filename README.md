@@ -39,5 +39,8 @@ The backend will be available at `http://localhost:5000` and the frontend at `ht
 Unimicro requested the disclosure of AI usage in the project.
 Throughout the project, copilot was used to assist with code suggestions everywhere. All code is written by me, with input from copilot. Any accepted suggestions are reviewed and modified by me to ensure they meet the project requirements and my coding standards. Copilot is a useful tool for enhancing productivity and cleanliness, but if requested I would be fine without it.
 
+## Notice: FluentAssertions
+The backend uses FluentAssertions for unit testing, which is only free for non-commercial use.
+
 ## License
 This project is licensed under the MIT License.

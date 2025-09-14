@@ -10,9 +10,17 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlite("Data Source=todo_dev.db"));
 }
-else
+else if (builder.Environment.IsProduction())
 {
     builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
+else if (builder.Environment.IsEnvironment("Testing"))
+{
+    // Testing environment is handled by the testing framework
+}
+else
+{
+    throw new Exception($"Unknown environment {builder.Environment.EnvironmentName}. Cannot configure database.");
 }
 
 builder.Services.AddScoped<ITaskQueryEngine, TaskQueryEngine>();
@@ -68,3 +76,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// For Accessibility Testing
+public partial class Program { }
