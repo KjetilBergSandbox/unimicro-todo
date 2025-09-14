@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Todo.Api.Data;
+using Todo.Api.Services;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ else
 {
     builder.Services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
+
+builder.Services.AddScoped<ITaskQueryEngine, TaskQueryEngine>();
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson();

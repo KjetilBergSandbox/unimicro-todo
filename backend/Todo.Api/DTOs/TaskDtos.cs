@@ -34,5 +34,19 @@ namespace Todo.Api.DTOs
             public DateTime CreatedAt { get; set; }
             public DateTime? UpdatedAt { get; set; }
         }
+
+        public class PagedResponse
+        {
+            [Required]
+            public List<Response> Items { get; set; } = [];
+            [Required]
+            public int Total { get; set; }
+            [Required]
+            public int Limit { get; set; }
+            [Required]
+            public int Offset { get; set; }
+            public string? Next { get; set; }
+            public string? Prev { get; set; }
+        }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todo.Api.DTOs;
 using Todo.Api.Mappers;
 using Todo.Api.Data;
+using Todo.Api.Services;
 
 namespace Todo.Api.Controllers
 {
@@ -13,14 +14,45 @@ namespace Todo.Api.Controllers
     {
 
         private readonly TodoDbContext _context;
+        private readonly ITaskQueryEngine _queryEngine;
 
-        public TaskController(TodoDbContext context) { _context = context; }
+        public TaskController(TodoDbContext context, ITaskQueryEngine queryEngine)
+        {
+            _context = context;
+            _queryEngine = queryEngine;
+        }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskDtos.Response>>> GetTasks()
+        public async Task<ActionResult<TaskDtos.PagedResponse>> GetTasks(
+            [FromQuery] string? query,
+            [FromQuery] List<string>? tags,
+            [FromQuery] int limit = 25,
+            [FromQuery] int offset = 0)
         {
-            var tasks = await _context.Tasks.ToListAsync();
-            return tasks.Select(TaskMapper.ToResponseDto).ToList();
+            const int MaxLimit = 100;
+            limit = Math.Clamp(limit, 0, MaxLimit);
+            offset = Math.Max(0, offset);
+
+            var dbQuery = _context.Tasks.AsQueryable();
+            dbQuery = _queryEngine.ApplyFilters(_context.Tasks.AsQueryable(), tags);
+            var candidates = await dbQuery.ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(query)) candidates = _queryEngine.ApplyOrdering(candidates, query).ToList();
+
+            var paged = candidates.Skip(offset).Take(limit).ToList();
+
+            var next = offset + limit < candidates.Count ? Url.Action(nameof(GetTasks), new { query, tags, limit, offset = offset + limit }) : null;
+            var prev = offset > 0 ? Url.Action(nameof(GetTasks), new { query, tags, limit, offset = Math.Max(0, offset - limit) }) : null;
+
+            return new TaskDtos.PagedResponse
+            {
+                Items = paged.Select(TaskMapper.ToResponseDto).ToList(),
+                Total = candidates.Count,
+                Limit = limit,
+                Offset = offset,
+                Next = next,
+                Prev = prev
+            };
         }
 
         [HttpGet("{id}")]
