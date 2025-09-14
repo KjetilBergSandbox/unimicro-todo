@@ -23,6 +23,17 @@ else
     throw new Exception($"Unknown environment {builder.Environment.EnvironmentName}. Cannot configure database.");
 }
 
+var origins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOriginsPolicy", policy =>
+    {
+        policy.WithOrigins(origins ?? Array.Empty<string>())
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddScoped<ITaskQueryEngine, TaskQueryEngine>();
 
 builder.Services.AddControllers()
@@ -70,6 +81,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowedOriginsPolicy");
 
 app.UseAuthorization();
 
