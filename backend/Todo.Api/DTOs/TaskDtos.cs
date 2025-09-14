@@ -15,7 +15,7 @@ namespace Todo.Api.DTOs
 
         public class Update
         {
-            [Required(AllowEmptyStrings = false, ErrorMessage = "Title is required.")]
+            [Required(AllowEmptyStrings = false, ErrorMessage = "Title is required and must not be empty.")]
             [StringLength(140, MinimumLength = 1, ErrorMessage = "Title must be between 1 and 140 characters.")]
             public string Title { get; set; } = string.Empty;
             [Required]
