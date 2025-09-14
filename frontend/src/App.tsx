@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import type { Task, PagedResponse } from "./types";
+import { useState, useEffect } from "react";
+import { getTasks } from "./api";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [paged, setPaged] = useState<PagedResponse | null>(null);
+
+  const fetchTasks = async (limit = 5, offset = 0) => {
+    const data = await getTasks(limit, offset);
+    setTasks(data.items);
+    setPaged(data);
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const handleNext = () => {
+    if (paged?.next) {
+      const url = new URL(paged.next, window.location.origin);
+      fetchTasks(
+        Number(url.searchParams.get("limit")),
+        Number(url.searchParams.get("offset"))
+      );
+    }
+  };
+
+  const handlePrev = () => {
+    if (paged?.prev) {
+      const url = new URL(paged.prev, window.location.origin);
+      fetchTasks(
+        Number(url.searchParams.get("limit")),
+        Number(url.searchParams.get("offset"))
+      );
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div style={{ padding: "2rem" }}>
+      <h1>Todo List</h1>
+      <ul>
+        {tasks.map((t) => (
+          <li key={t.id}>
+            <strong>{t.title}</strong> [{t.completed ? "✅" : "❌"}]{" "}
+            {t.tags.join(", ")}
+          </li>
+        ))}
+      </ul>
+      <div style={{ marginTop: "1rem" }}>
+        <button onClick={handlePrev} disabled={!paged?.prev}>
+          Prev
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={handleNext} disabled={!paged?.next} style={{ marginLeft: "1rem" }}>
+          Next
+        </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+      <p>
+        Showing {tasks.length} of {paged?.total ?? 0}
       </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
