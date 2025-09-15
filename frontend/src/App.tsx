@@ -1,6 +1,6 @@
 import type { Task, PagedResponse } from "./types";
 import { useState, useEffect } from "react";
-import { getTasks } from "./api";
+import { getTasks, insertExampleTask } from "./api";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -36,6 +36,11 @@ function App() {
     }
   };
 
+  const handleInsertExample = async () => {
+    await insertExampleTask();
+    fetchTasks();
+  };
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Todo List</h1>
@@ -53,6 +58,9 @@ function App() {
         </button>
         <button onClick={handleNext} disabled={!paged?.next} style={{ marginLeft: "1rem" }}>
           Next
+        </button>
+        <button onClick={handleInsertExample} style={{ marginLeft: "1rem" }}>
+          Insert Example Task
         </button>
       </div>
       <p>
